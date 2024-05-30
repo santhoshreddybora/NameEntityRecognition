@@ -10,9 +10,7 @@ class GCloud:
         os.system(command)
 
 
-    def sync_folder_from_gcloud(
-        self, gcp_bucket_url: str, filename: str, destination: Path
-    ):
-
+    def sync_folder_from_gcloud(self, gcp_bucket_url: str, filename: str, destination: Path):
+        
         command = f"gsutil cp gs://{gcp_bucket_url}/{filename} {destination}"
         os.system(command)

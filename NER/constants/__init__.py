@@ -15,3 +15,4 @@ CSV_DATA_FILE_NAME = "ner.csv"
 GCP_MODEL_NAME = "model.pt"
 
 DATA_INGESTION_ARTIFACTS_DIR = "DataIngestionArtifacts"
+
