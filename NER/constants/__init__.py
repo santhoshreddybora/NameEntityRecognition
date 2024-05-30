@@ -16,3 +16,15 @@ GCP_MODEL_NAME = "model.pt"
 
 DATA_INGESTION_ARTIFACTS_DIR = "DataIngestionArtifacts"
 
+
+"""
+Data Transformation related constants
+"""
+DATA_TRANSFORMATION_ARTIFACTS_DIR = "DataTransformationArtifacts"
+LABELS_TO_IDS_FILE_NAME = "labels_to_ids.pkl"
+IDS_TO_LABELS_FILE_NAME = "ids_to_labels.pkl"
+DF_TRAIN_FILE_NAME = "df_train.pkl"
+DF_VAL_FILE_NAME = "df_val.pkl"
+DF_TEST_FILE_NAME = "df_test.pkl"
+UNIQUE_LABELS_FILE_NAME = "unique_labels.pkl"
+
