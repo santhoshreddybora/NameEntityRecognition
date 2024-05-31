@@ -17,3 +17,8 @@ class DataTransformationArtifact:
     df_test_path: str
     unique_labels_path: str
 
+
+@dataclass
+class ModelTrainerArtifact:
+    bert_model_path: str
+    tokenizer_file_path: str

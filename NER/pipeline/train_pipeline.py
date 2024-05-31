@@ -1,12 +1,13 @@
 import sys
 from NER.components.data_ingestion import DataIngestion
 from NER.components.data_transforamation import DataTrandformation
+from NER.components.model_trainer import ModelTraining
 from NER.constants import *
 from NER.exception import CustomException
 from NER.logger import logging
 
-from NER.entity.config_entity import DataIngestionConfig,DataTransformationConfig
-from NER.entity.artifact_entity import DataIngestionArtifact,DataTransformationArtifact
+from NER.entity.config_entity import DataIngestionConfig,DataTransformationConfig,ModelTrainingConfig
+from NER.entity.artifact_entity import DataIngestionArtifact,DataTransformationArtifact,ModelTrainerArtifact
 from NER.configuration.gcloud import GCloud
 
 
@@ -15,7 +16,7 @@ class TrainPipeline:
     def __init__(self):
         self.data_ingestion_config = DataIngestionConfig()
         self.data_transformation_config=DataTransformationConfig()
-    
+        self.model_training_config=ModelTrainingConfig()
         self.gcloud=GCloud
     
     def start_data_ingestion(self)->DataIngestionArtifact:
@@ -44,11 +45,31 @@ class TrainPipeline:
             return data_transformation_artifact
         except Exception as e:
             raise CustomException(e, sys) from e
-    
+
+    def start_model_training(
+        self, data_transformation_artifacts: DataTransformationArtifact
+    ) -> ModelTrainerArtifact:
+        logging.info("Entered the start_model_training method of Train pipeline class")
+        try:
+            model_trainer = ModelTraining(
+                model_trainer_config=self.model_training_config,
+                data_transformation_artifacts=data_transformation_artifacts,
+            )
+            model_trainer_artifact = model_trainer.initiate_model_training()
+
+            logging.info("Performed the Model training operation")
+            logging.info(
+                "Exited the start_model_training method of Train pipeline class"
+            )
+            return model_trainer_artifact
+
+        except Exception as e:
+            raise CustomException(e, sys) from e    
     def run_pipeline(self):
         try:
             data_ingestion_artifact=self.start_data_ingestion()
             data_transformation_artifact=self.start_data_transformation(data_ingestion_artifact=data_ingestion_artifact)
+            model_training_artifact=self.start_model_training(data_transformation_artifacts=data_transformation_artifact)
         except Exception as e:
             raise CustomException(e, sys) from e
     
