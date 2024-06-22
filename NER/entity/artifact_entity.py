@@ -1,15 +1,17 @@
 from dataclasses import dataclass
 
 
-
+# Data Ingestion Artifacts
 @dataclass
-class DataIngestionArtifact:
-    zip_data_file_path:str
-    data_file_path:str
+class DataIngestionArtifacts:
+    zip_data_file_path: str
+    csv_data_file_path: str
 
 
+
+# Data Transformation Artifacts
 @dataclass
-class DataTransformationArtifact:
+class DataTransformationArtifacts:
     labels_to_ids_path: str
     ids_to_labels_path: str
     df_train_path: str
@@ -18,12 +20,16 @@ class DataTransformationArtifact:
     unique_labels_path: str
 
 
+
+# Model Training Artifacts
 @dataclass
-class ModelTrainerArtifact:
+class ModelTrainingArtifacts:
     bert_model_path: str
     tokenizer_file_path: str
 
 
+
+# Model Evaluation Artifacts
 @dataclass
 class ModelEvaluationArtifacts:
     trained_model_accuracy: float

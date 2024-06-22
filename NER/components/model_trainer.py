@@ -6,16 +6,16 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from transformers import BertTokenizerFast
 from model.bert import BertModel
-from NER.constants import *
-from NER.entity.artifact_entity import (
-    DataTransformationArtifact,
-    ModelTrainerArtifact,
+from ner.constants import *
+from ner.entity.artifact_entity import (
+    DataTransformationArtifacts,
+    ModelTrainingArtifacts,
 )
-from NER.configuration.gcloud import GCloud
-from NER.entity.config_entity import ModelTrainingConfig
-from NER.exception import CustomException
-from NER.logger import logging
-from NER.utils.utils import MainUtils
+from ner.configuration.gcloud import GCloud
+from ner.entity.config_entity import ModelTrainingConfig
+from ner.exception import NerException
+from ner.logger import logging
+from ner.utils.utils import MainUtils
 
 
 class DataSequence(torch.utils.data.Dataset):
@@ -94,21 +94,21 @@ class DataSequence(torch.utils.data.Dataset):
             return label_ids
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
 
 
 class ModelTraining:
     def __init__(
         self,
         model_trainer_config: ModelTrainingConfig,
-        data_transformation_artifacts: DataTransformationArtifact,
+        data_transformation_artifacts: DataTransformationArtifacts,
     ) -> None:
         self.model_trainer_config = model_trainer_config
         self.data_transformation_artifacts = data_transformation_artifacts
         self.utils = MainUtils()
         self.gcloud = GCloud()
 
-    def initiate_model_training(self) -> ModelTrainerArtifact:
+    def initiate_model_training(self) -> ModelTrainingArtifacts:
         try:
             logging.info("Entered the initiate_model_training method of Model training class")
             os.makedirs(
@@ -261,7 +261,7 @@ class ModelTraining:
                 f"Uploaded pickle file to the Google storage. File name - {os.path.basename(self.model_trainer_config.tokenizer_file_path)}"
             )
 
-            model_training_artifacts = ModelTrainerArtifact(
+            model_training_artifacts = ModelTrainingArtifacts(
                 bert_model_path=self.model_trainer_config.bert_model_instance_path,
                 tokenizer_file_path=self.model_trainer_config.tokenizer_file_path,
             )
@@ -270,4 +270,4 @@ class ModelTraining:
             return model_training_artifacts
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e

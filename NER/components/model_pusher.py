@@ -1,10 +1,10 @@
 import sys
-from NER.configuration.gcloud import GCloud
-from NER.constants import *
-from NER.entity.artifact_entity import ModelEvaluationArtifacts, ModelPusherArtifacts
-from NER.entity.config_entity import ModelPusherConfig
-from NER.exception import CustomException
-from NER.logger import logging
+from ner.configuration.gcloud import GCloud
+from ner.constants import *
+from ner.entity.artifact_entity import ModelEvaluationArtifacts, ModelPusherArtifacts
+from ner.entity.config_entity import ModelPusherConfig
+from ner.exception import NerException
+from ner.logger import logging
 
 
 class ModelPusher:
@@ -43,4 +43,4 @@ class ModelPusher:
             return model_pusher_artifacts
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e

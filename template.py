@@ -4,7 +4,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO,format='[%(asctime)s]: - %(message)s:')
 
-project_name='NER'
+project_name='ner'
 list_of_files=[
     f"{project_name}/components/__init__.py",
     f"{project_name}/components/data_ingestion.py",

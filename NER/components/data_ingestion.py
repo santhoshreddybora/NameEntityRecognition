@@ -1,18 +1,20 @@
-from NER.configuration.gcloud import GCloud
-import os,sys
-from NER.entity.config_entity import DataIngestionConfig
-from NER.entity.artifact_entity import DataIngestionArtifact
-from NER.constants import *
-from NER.logger import logging 
-from NER.exception import CustomException
+import os
+import sys
 from zipfile import ZipFile
-
+from ner.configuration.gcloud import GCloud
+from ner.constants import *
+from ner.entity.artifact_entity import DataIngestionArtifacts
+from ner.entity.config_entity import DataIngestionConfig
+from ner.exception import NerException
+from ner.logger import logging
 
 
 class DataIngestion:
-    def __init__(self, data_ingestion_config: DataIngestionConfig, gcloud: GCloud) -> None:
+    def __init__(
+        self, data_ingestion_config: DataIngestionConfig, gcloud: GCloud
+    ) -> None:
         self.data_ingestion_config = data_ingestion_config
-        self.gcloud = gcloud()
+        self.gcloud = gcloud
 
 
     def get_data_from_gcp(self, bucket_name: str, file_name: str, path: str) -> ZipFile:
@@ -24,7 +26,7 @@ class DataIngestion:
             logging.info("Exited the get_data_from_gcp method of data ingestion class")
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
 
 
     def extract_data(self, input_file_path: str, output_file_path: str) -> None:
@@ -39,20 +41,20 @@ class DataIngestion:
             logging.info("Exited the extract_data method of Data ingestion class")
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
 
 
-    def initiate_data_ingestion(self) -> DataIngestionArtifact:
+    def initiate_data_ingestion(self) -> DataIngestionArtifacts:
         logging.info(
             "Entered the initiate_data_ingestion method of data ingestion class"
         )
         try:
             # Creating Data Ingestion Artifacts directory inside artifacts folder
             os.makedirs(
-                self.data_ingestion_config.data_ingestion_artifact_dir, exist_ok=True
+                self.data_ingestion_config.data_ingestion_artifacts_dir, exist_ok=True
             )
             logging.info(
-                f"Created {os.path.basename(self.data_ingestion_config.data_ingestion_artifact_dir)} directory."
+                f"Created {os.path.basename(self.data_ingestion_config.data_ingestion_artifacts_dir)} directory."
             )
 
             # Getting data from GCP
@@ -72,13 +74,12 @@ class DataIngestion:
             )
             logging.info(f"Extracted the data from zip file.")
 
-            data_ingestion_artifact = DataIngestionArtifact(
+            data_ingestion_artifact = DataIngestionArtifacts(
                 zip_data_file_path=self.data_ingestion_config.gcp_data_file_path,
-                data_file_path=self.data_ingestion_config.csv_data_file_path,
+                csv_data_file_path=self.data_ingestion_config.csv_data_file_path,
             )
             logging.info("Exited the initiate_data_ingestion method of data ingestion class")
             return data_ingestion_artifact
 
         except Exception as e:
-            raise CustomException(e, sys) from e
-
+            raise NerException(e, sys) from e

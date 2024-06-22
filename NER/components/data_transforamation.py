@@ -3,23 +3,29 @@ import sys
 import numpy as np
 import pandas as pd
 from pandas import DataFrame
+from ner.entity.artifact_entity import (
+    DataIngestionArtifacts,
+    DataTransformationArtifacts,
+)
+from ner.configuration.gcloud import GCloud
+from ner.constants import *
+from ner.entity.config_entity import DataTransformationConfig
+from ner.exception import NerException
+from ner.logger import logging
+from ner.utils.utils import MainUtils
 
-from NER.entity.artifact_entity import DataIngestionArtifact,DataTransformationArtifact
-from NER.entity.config_entity import DataTransformationConfig
-from NER.utils.utils import MainUtils
-from NER.constants import *
-from NER.configuration.gcloud import GCloud
-from NER.exception import CustomException
-from NER.logger import logging
 
-class DataTrandformation:
-    def __init__(self,data_transformation_config:DataTransformationConfig,
-                 data_ingestion_artifact:DataIngestionArtifact)->None:
-        self.data_ingestion_artifact = data_ingestion_artifact
-        self.data_transformation_config=data_transformation_config
-        self.utils=MainUtils()
-        self.gcloud=GCloud()
-    
+class DataTransformation:
+    def __init__(
+        self,
+        data_transformation_config: DataTransformationConfig,
+        data_ingestion_artifacts: DataIngestionArtifacts,
+    ) -> None:
+        self.data_transformation_config = data_transformation_config
+        self.data_ingestion_artifacts = data_ingestion_artifacts
+        self.utils = MainUtils()
+        self.gcloud = GCloud()
+
     def splitting_data(self, df: DataFrame) -> dict:
         logging.info("Entered the splitting_data method of Data transformation class")
         try:
@@ -53,23 +59,23 @@ class DataTrandformation:
             )
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
 
-    def initiate_data_transformation(self) -> DataTransformationArtifact:
+    def initiate_data_transformation(self) -> DataTransformationArtifacts:
         logging.info(
             "Entered the initiate_data_transformation method of Data transformation class"
         )
         try:
             # Creating Data transformation artifacts directory
             os.makedirs(
-                self.data_transformation_config.data_transformation_artifact_dir,
+                self.data_transformation_config.data_transformation_artifacts_dir,
                 exist_ok=True,
             )
             logging.info(
-                f"Created {os.path.basename(self.data_transformation_config.data_transformation_artifact_dir)} directory."
+                f"Created {os.path.basename(self.data_transformation_config.data_transformation_artifacts_dir)} directory."
             )
 
-            df = pd.read_csv(self.data_ingestion_artifact.data_file_path)
+            df = pd.read_csv(self.data_ingestion_artifacts.csv_data_file_path)
             (
                 labels_to_ids,
                 ids_to_labels,
@@ -106,11 +112,11 @@ class DataTrandformation:
             )
 
             self.utils.dump_pickle_file(
-                output_filepath=self.data_transformation_config.df_train_file_path,
+                output_filepath=self.data_transformation_config.df_train_path,
                 data=df_train,
             )
             logging.info(
-                f"Saved the train df pickle file to Artifacts directory. File name - {os.path.basename(self.data_transformation_config.df_train_file_path)}"
+                f"Saved the train df pickle file to Artifacts directory. File name - {os.path.basename(self.data_transformation_config.df_train_path)}"
             )
 
             self.utils.dump_pickle_file(
@@ -121,11 +127,11 @@ class DataTrandformation:
             )
 
             self.utils.dump_pickle_file(
-                output_filepath=self.data_transformation_config.df_test_file_path,
+                output_filepath=self.data_transformation_config.df_test_path,
                 data=df_test,
             )
             logging.info(
-                f"Saved the test df pickle file to Artifacts directory. File name - {os.path.basename(self.data_transformation_config.df_test_file_path)}"
+                f"Saved the test df pickle file to Artifacts directory. File name - {os.path.basename(self.data_transformation_config.df_test_path)}"
             )
 
             self.utils.dump_pickle_file(
@@ -136,17 +142,16 @@ class DataTrandformation:
                 f"Saved the unique labels pickle file to Artifacts directory. File name - {os.path.basename(self.data_transformation_config.unique_labels_path)}"
             )
 
-            data_transformation_artifacts = DataTransformationArtifact(
+            data_transformation_artifacts = DataTransformationArtifacts(
                 labels_to_ids_path=self.data_transformation_config.labels_to_ids_path,
                 ids_to_labels_path=self.data_transformation_config.ids_to_labels_path,
-                df_train_path=self.data_transformation_config.df_train_file_path,
+                df_train_path=self.data_transformation_config.df_train_path,
                 df_val_path=self.data_transformation_config.df_val_path,
-                df_test_path=self.data_transformation_config.df_test_file_path,
+                df_test_path=self.data_transformation_config.df_test_path,
                 unique_labels_path=self.data_transformation_config.unique_labels_path,
             )
             logging.info("Exited the initiate_data_transformation method of Data transformation class")
             return data_transformation_artifacts
 
         except Exception as e:
-            raise CustomException(e, sys) from e
-        
+            raise NerException(e, sys) from e

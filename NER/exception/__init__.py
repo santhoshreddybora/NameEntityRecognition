@@ -8,7 +8,7 @@ def error_message_detail(error,error_detail:sys):
         file_name,exc_tb.tb_lineno,str(error))
     return error_message 
 
-class CustomException(Exception):
+class NerException(Exception):
     def __init__(self, error_message,error_detail):
         """
         :param error_message: error message in string format

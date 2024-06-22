@@ -3,25 +3,25 @@ import sys
 import torch
 from pandas import DataFrame
 from torch.utils.data import DataLoader
-from NER.components.model_trainer import DataSequence
-from NER.configuration.gcloud import GCloud
-from NER.constants import *
-from NER.entity.artifact_entity import (
-    DataTransformationArtifact,
+from ner.components.model_trainer import DataSequence
+from ner.configuration.gcloud import GCloud
+from ner.constants import *
+from ner.entity.artifact_entity import (
+    DataTransformationArtifacts,
     ModelEvaluationArtifacts,
-    ModelTrainerArtifact,
+    ModelTrainingArtifacts,
 )
-from NER.entity.config_entity import ModelEvalConfig
-from NER.exception import CustomException
-from NER.logger import logging
-from NER.utils.utils import MainUtils
+from ner.entity.config_entity import ModelEvalConfig
+from ner.exception import NerException
+from ner.logger import logging
+from ner.utils.utils import MainUtils
 
 
 class ModelEvaluation:
     def __init__(
         self,
-        data_transformation_artifacts: DataTransformationArtifact,
-        model_training_artifacts: ModelTrainerArtifact,
+        data_transformation_artifacts: DataTransformationArtifacts,
+        model_training_artifacts: ModelTrainingArtifacts,
         model_evaluation_config: ModelEvalConfig,
     ) -> None:
         self.data_transformation_artifacts = data_transformation_artifacts
@@ -81,7 +81,7 @@ class ModelEvaluation:
             return val_accuracy
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
         
 
     def initiate_model_evaluation(self) -> ModelEvaluationArtifacts:
@@ -143,4 +143,4 @@ class ModelEvaluation:
             return model_evaluation_artifact
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
