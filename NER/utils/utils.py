@@ -5,9 +5,9 @@ import pickle
 import numpy as np
 import yaml
 from zipfile import Path
-from NER.constants import *
-from NER.exception import CustomException
-from NER.logger import logging
+from ner.constants import *
+from ner.exception import NerException
+from ner.logger import logging
 
 # initiatlizing logging
 
@@ -20,7 +20,7 @@ class MainUtils:
                 return yaml.safe_load(yaml_file)
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
 
     @staticmethod
     def dump_pickle_file(output_filepath: str, data) -> None:
@@ -29,7 +29,7 @@ class MainUtils:
                 pickle.dump(data, encoded_pickle)
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
 
     @staticmethod
     def load_pickle_file(filepath: str) -> object:
@@ -39,7 +39,7 @@ class MainUtils:
             return obj
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
 
     def save_numpy_array_data(self, file_path: str, array: np.array) -> str:
         logging.info("Entered the save_numpy_array_data method of MainUtils class")
@@ -50,7 +50,7 @@ class MainUtils:
             return file_path
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
 
     def load_numpy_array_data(self, file_path: str) -> np.array:
         logging.info("Entered the load_numpy_array_data method of MainUtils class")
@@ -59,7 +59,7 @@ class MainUtils:
                 return np.load(file_obj)
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
 
     @staticmethod
     def save_object(file_path: str, obj: object) -> None:
@@ -73,7 +73,7 @@ class MainUtils:
             return file_path
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
 
     @staticmethod
     def load_object(file_path: str) -> object:
@@ -85,7 +85,7 @@ class MainUtils:
             return obj
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
 
     @staticmethod
     def read_txt_file(file_path: str) -> str:
@@ -101,7 +101,7 @@ class MainUtils:
             return text
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
 
     @staticmethod
     def save_descriptions(descriptions, filename) -> None:
@@ -117,7 +117,7 @@ class MainUtils:
             return filename
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
 
     @staticmethod
     def save_txt_file(output_file_path: str, data: list) -> Path:
@@ -128,7 +128,7 @@ class MainUtils:
             return output_file_path
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
 
     @staticmethod
     def max_length_desc(descriptions: dict) -> int:
@@ -139,4 +139,4 @@ class MainUtils:
             return max(len(d.split()) for d in all_desc)
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise NerException(e, sys) from e
